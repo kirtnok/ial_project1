@@ -85,8 +85,8 @@ void List_Init( List *list ) {
  * @param list Ukazatel na inicializovanou strukturu jednosměrně vázaného seznamu
  **/
 void List_Dispose( List *list ) {
-	list->activeElement=NULL;
-	while(list->firstElement != NULL){
+	list->activeElement = NULL; //nastavenie ukazatela na povodnu hodnotu
+	while(list->firstElement != NULL){ // odstranovanie prvkov kym nebude zoznam prazdny
 		List_DeleteFirst(list);
 	}
 }
@@ -101,11 +101,11 @@ void List_Dispose( List *list ) {
  */
 void List_InsertFirst( List *list, int data ) {
 	ListElementPtr newElemPtr = (ListElementPtr)malloc(sizeof(struct ListElement));
-	if (newElemPtr == NULL){
+	if (newElemPtr == NULL){ //alokovanie miesta pre prvok a nasledna kontrola alokacie
 		List_Error();
 	}
 	newElemPtr->data = data;
-	newElemPtr->nextElement = list->firstElement;
+	newElemPtr->nextElement = list->firstElement; //spravne ulozenie na prvu poziciu
 	list->firstElement = newElemPtr;
 }
 
@@ -131,7 +131,7 @@ void List_GetFirst( List *list, int *dataPtr ) {
 		List_Error();
 	}
 	else{
-		*dataPtr = list->firstElement->data;
+		*dataPtr = list->firstElement->data; //ukazatel sa dereferencuje a ulozi sa hodnota zo zoznamu
 	}
 }
 
@@ -144,13 +144,13 @@ void List_GetFirst( List *list, int *dataPtr ) {
  */
 void List_DeleteFirst( List *list ) {
 	ListElementPtr elemPtr;
-	if (List_IsActive(list)){
+	if (List_IsActive(list)){ //kontrola aktivneho elementu pomocou danej funcie
 		list->activeElement = NULL;
 	}
 	if (list->firstElement != NULL){
-		elemPtr = list->firstElement;
-		list->firstElement = elemPtr->nextElement;
-		free(elemPtr);
+		elemPtr = list->firstElement; //ukazanie na prvok ktory treba odstranit
+		list->firstElement = elemPtr->nextElement; //liknutie dalsieho prvku za prvkom co mame odstranit
+		free(elemPtr); //uvolnenie daneho prvku
 	}
 }
 
@@ -164,9 +164,9 @@ void List_DeleteFirst( List *list ) {
 void List_DeleteAfter( List *list ) {
 	ListElementPtr elemPtr;
 	if (List_IsActive(list) && list->activeElement->nextElement != NULL) {
-		elemPtr = list->activeElement->nextElement;
-		list->activeElement->nextElement = elemPtr->nextElement;
-		free(elemPtr);
+		elemPtr = list->activeElement->nextElement; //ukazanie na prvok za aktivnym prvkom
+		list->activeElement->nextElement = elemPtr->nextElement; //liknutie dalsieho prvku za prvkom co mame odstranit
+		free(elemPtr); // uvolnenie daneho prvku
 	}
 }
 
@@ -182,12 +182,12 @@ void List_DeleteAfter( List *list ) {
 void List_InsertAfter( List *list, int data ) {
 	if (List_IsActive(list)) {
 		ListElementPtr newElemPtr = (ListElementPtr)malloc(sizeof(struct ListElement));
-		if (newElemPtr == NULL){
+		if (newElemPtr == NULL){ // alokacia a nasledna kontrola
 			List_Error();
 		}
 		newElemPtr->data = data;
-		newElemPtr->nextElement = list->activeElement->nextElement;
-		list->activeElement->nextElement = newElemPtr;
+		newElemPtr->nextElement = list->activeElement->nextElement; //liknutie noveho prvku na dalsi prvok za aktivnym
+		list->activeElement->nextElement = newElemPtr; // liknutie prvku za aktivnym na novy prkvok
 	}
 }
 
@@ -199,7 +199,7 @@ void List_InsertAfter( List *list, int data ) {
  * @param dataPtr Ukazatel na cílovou proměnnou
  */
 void List_GetValue( List *list, int *dataPtr ) {
-	if (!List_IsActive(list)){
+	if (!List_IsActive(list)){ //pouzitie znegovaneho returnu funkcie
 		List_Error();
 	}
 	else{
@@ -240,7 +240,7 @@ void List_Next( List *list ) {
  * @param list Ukazatel na inicializovanou strukturu jednosměrně vázaného seznamu
  */
 int List_IsActive( List *list ) {
-	return (list->activeElement != NULL);
+	return (list->activeElement != NULL); //aktivny == nie je NULL, vracia sa vysledok podmieky
 }
 
 /* Konec c201.c */
