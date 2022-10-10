@@ -103,6 +103,7 @@ void List_InsertFirst( List *list, int data ) {
 	ListElementPtr newElemPtr = (ListElementPtr)malloc(sizeof(struct ListElement));
 	if (newElemPtr == NULL){ //alokovanie miesta pre prvok a nasledna kontrola alokacie
 		List_Error();
+		return;
 	}
 	newElemPtr->data = data;
 	newElemPtr->nextElement = list->firstElement; //spravne ulozenie na prvu poziciu
@@ -129,10 +130,9 @@ void List_First( List *list ) {
 void List_GetFirst( List *list, int *dataPtr ) {
 	if (list->firstElement == NULL){
 		List_Error();
+		return;
 	}
-	else{
-		*dataPtr = list->firstElement->data; //ukazatel sa dereferencuje a ulozi sa hodnota zo zoznamu
-	}
+	*dataPtr = list->firstElement->data; //ukazatel sa dereferencuje a ulozi sa hodnota zo zoznamu
 }
 
 /**
@@ -184,6 +184,7 @@ void List_InsertAfter( List *list, int data ) {
 		ListElementPtr newElemPtr = (ListElementPtr)malloc(sizeof(struct ListElement));
 		if (newElemPtr == NULL){ // alokacia a nasledna kontrola
 			List_Error();
+			return;
 		}
 		newElemPtr->data = data;
 		newElemPtr->nextElement = list->activeElement->nextElement; //liknutie noveho prvku na dalsi prvok za aktivnym
@@ -201,10 +202,9 @@ void List_InsertAfter( List *list, int data ) {
 void List_GetValue( List *list, int *dataPtr ) {
 	if (!List_IsActive(list)){ //pouzitie znegovaneho returnu funkcie
 		List_Error();
+		return;
 	}
-	else{
-		*dataPtr = list->activeElement->data;
-	}
+	*dataPtr = list->activeElement->data;
 }
 
 /**
