@@ -86,8 +86,11 @@ void List_Init( List *list ) {
  **/
 void List_Dispose( List *list ) {
 	list->activeElement = NULL; //nastavenie ukazatela na povodnu hodnotu
+	ListElementPtr elemPtr;
 	while(list->firstElement != NULL){ // odstranovanie prvkov kym nebude zoznam prazdny
-		List_DeleteFirst(list);
+		elemPtr = list->firstElement; //ukazanie na prvok ktory treba odstranit
+		list->firstElement = elemPtr->nextElement; //liknutie dalsieho prvku za prvkom co mame odstranit
+		free(elemPtr); //uvolnenie daneho prvku
 	}
 }
 
@@ -144,7 +147,7 @@ void List_GetFirst( List *list, int *dataPtr ) {
  */
 void List_DeleteFirst( List *list ) {
 	ListElementPtr elemPtr;
-	if (List_IsActive(list)){ //kontrola aktivneho elementu pomocou danej funcie
+	if (list->activeElement != NULL){ //kontrola aktivneho elementu pomocou danej funcie
 		list->activeElement = NULL;
 	}
 	if (list->firstElement != NULL){
@@ -163,7 +166,7 @@ void List_DeleteFirst( List *list ) {
  */
 void List_DeleteAfter( List *list ) {
 	ListElementPtr elemPtr;
-	if (List_IsActive(list) && list->activeElement->nextElement != NULL) {
+	if (list->activeElement != NULL && list->activeElement->nextElement != NULL) {
 		elemPtr = list->activeElement->nextElement; //ukazanie na prvok za aktivnym prvkom
 		list->activeElement->nextElement = elemPtr->nextElement; //liknutie dalsieho prvku za prvkom co mame odstranit
 		free(elemPtr); // uvolnenie daneho prvku
@@ -180,7 +183,7 @@ void List_DeleteAfter( List *list ) {
  * @param data Hodnota k vložení do seznamu za právě aktivní prvek
  */
 void List_InsertAfter( List *list, int data ) {
-	if (List_IsActive(list)) {
+	if (list->activeElement != NULL) {
 		ListElementPtr newElemPtr = (ListElementPtr)malloc(sizeof(struct ListElement));
 		if (newElemPtr == NULL){ // alokacia a nasledna kontrola
 			List_Error();
@@ -200,7 +203,7 @@ void List_InsertAfter( List *list, int data ) {
  * @param dataPtr Ukazatel na cílovou proměnnou
  */
 void List_GetValue( List *list, int *dataPtr ) {
-	if (!List_IsActive(list)){ //pouzitie znegovaneho returnu funkcie
+	if (list->activeElement == NULL){ //pouzitie znegovaneho returnu funkcie
 		List_Error();
 		return;
 	}
@@ -215,7 +218,7 @@ void List_GetValue( List *list, int *dataPtr ) {
  * @param data Nová hodnota právě aktivního prvku
  */
 void List_SetValue( List *list, int data ) {
-	if (List_IsActive(list)) {
+	if (list->activeElement != NULL) {
 		list->activeElement->data = data;
 	}
 }
@@ -228,7 +231,7 @@ void List_SetValue( List *list, int data ) {
  * @param list Ukazatel na inicializovanou strukturu jednosměrně vázaného seznamu
  */
 void List_Next( List *list ) {
-	if (List_IsActive(list)){
+	if (list->activeElement != NULL){
 		list->activeElement = list->activeElement->nextElement;
 	}
 }
