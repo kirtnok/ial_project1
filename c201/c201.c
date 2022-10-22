@@ -85,13 +85,13 @@ void List_Init( List *list ) {
  * @param list Ukazatel na inicializovanou strukturu jednosměrně vázaného seznamu
  **/
 void List_Dispose( List *list ) {
-	list->activeElement = NULL; //nastavenie ukazatela na povodnu hodnotu
 	ListElementPtr elemPtr;
 	while(list->firstElement != NULL){ // odstranovanie prvkov kym nebude zoznam prazdny
-		elemPtr = list->firstElement; //ukazanie na prvok ktory treba odstranit
-		list->firstElement = elemPtr->nextElement; //liknutie dalsieho prvku za prvkom co mame odstranit
-		free(elemPtr); //uvolnenie daneho prvku
+		elemPtr = list->firstElement;
+		list->firstElement = list->firstElement->nextElement;
+		free(elemPtr);
 	}
+	list->activeElement = NULL;
 }
 
 /**
@@ -103,13 +103,13 @@ void List_Dispose( List *list ) {
  * @param data Hodnota k vložení na začátek seznamu
  */
 void List_InsertFirst( List *list, int data ) {
-	ListElementPtr newElemPtr = (ListElementPtr)malloc(sizeof(struct ListElement));
-	if (newElemPtr == NULL){ //alokovanie miesta pre prvok a nasledna kontrola alokacie
+	ListElementPtr newElemPtr = malloc(sizeof(struct ListElement));
+	if (newElemPtr == NULL){
 		List_Error();
 		return;
 	}
 	newElemPtr->data = data;
-	newElemPtr->nextElement = list->firstElement; //spravne ulozenie na prvu poziciu
+	newElemPtr->nextElement = list->firstElement;
 	list->firstElement = newElemPtr;
 }
 
@@ -146,14 +146,14 @@ void List_GetFirst( List *list, int *dataPtr ) {
  * @param list Ukazatel na inicializovanou strukturu jednosměrně vázaného seznamu
  */
 void List_DeleteFirst( List *list ) {
-	ListElementPtr elemPtr;
-	if (list->activeElement != NULL){ //kontrola aktivneho elementu pomocou danej funcie
-		list->activeElement = NULL;
-	}
 	if (list->firstElement != NULL){
-		elemPtr = list->firstElement; //ukazanie na prvok ktory treba odstranit
+		ListElementPtr elemPtr;
+		elemPtr = list->firstElement;
+		if (list->activeElement == list->firstElement){
+			list->activeElement = NULL;
+		}
 		list->firstElement = elemPtr->nextElement; //liknutie dalsieho prvku za prvkom co mame odstranit
-		free(elemPtr); //uvolnenie daneho prvku
+		free(elemPtr);
 	}
 }
 
@@ -165,11 +165,11 @@ void List_DeleteFirst( List *list ) {
  * @param list Ukazatel na inicializovanou strukturu jednosměrně vázaného seznamu
  */
 void List_DeleteAfter( List *list ) {
-	ListElementPtr elemPtr;
 	if (list->activeElement != NULL && list->activeElement->nextElement != NULL) {
-		elemPtr = list->activeElement->nextElement; //ukazanie na prvok za aktivnym prvkom
+		ListElementPtr elemPtr;
+		elemPtr = list->activeElement->nextElement; //ulozenie ukazatela za aktivnym prvkom
 		list->activeElement->nextElement = elemPtr->nextElement; //liknutie dalsieho prvku za prvkom co mame odstranit
-		free(elemPtr); // uvolnenie daneho prvku
+		free(elemPtr);
 	}
 }
 
@@ -184,14 +184,14 @@ void List_DeleteAfter( List *list ) {
  */
 void List_InsertAfter( List *list, int data ) {
 	if (list->activeElement != NULL) {
-		ListElementPtr newElemPtr = (ListElementPtr)malloc(sizeof(struct ListElement));
-		if (newElemPtr == NULL){ // alokacia a nasledna kontrola
+		ListElementPtr newElemPtr = malloc(sizeof(struct ListElement));
+		if (newElemPtr == NULL){
 			List_Error();
 			return;
 		}
 		newElemPtr->data = data;
-		newElemPtr->nextElement = list->activeElement->nextElement; //liknutie noveho prvku na dalsi prvok za aktivnym
-		list->activeElement->nextElement = newElemPtr; // liknutie prvku za aktivnym na novy prkvok
+		newElemPtr->nextElement = list->activeElement->nextElement;
+		list->activeElement->nextElement = newElemPtr;
 	}
 }
 
@@ -203,7 +203,7 @@ void List_InsertAfter( List *list, int data ) {
  * @param dataPtr Ukazatel na cílovou proměnnou
  */
 void List_GetValue( List *list, int *dataPtr ) {
-	if (list->activeElement == NULL){ //pouzitie znegovaneho returnu funkcie
+	if (list->activeElement == NULL){
 		List_Error();
 		return;
 	}
@@ -243,7 +243,7 @@ void List_Next( List *list ) {
  * @param list Ukazatel na inicializovanou strukturu jednosměrně vázaného seznamu
  */
 int List_IsActive( List *list ) {
-	return (list->activeElement != NULL); //aktivny == nie je NULL, vracia sa vysledok podmieky
+	return (list->activeElement != NULL); //aktivny prvok nie je NULL, cize zoznam je aktivny
 }
 
 /* Konec c201.c */
