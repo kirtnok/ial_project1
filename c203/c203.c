@@ -94,6 +94,10 @@ void Queue_Error( int error_code ) {
  * @param stack Ukazatel na strukturu fronty
  */
 void Queue_Init( Queue *queue ) {
+	if (queue == NULL){
+		Queue_Error(QERR_INIT);
+		return;
+	}
 	for (int i = 0; i<QUEUE_SIZE; i++){ //nastavenie prvkov
 		queue->array[i] = '*';
 	}
@@ -109,7 +113,7 @@ void Queue_Init( Queue *queue ) {
  * @param index Aktuální index
  */
 int nextIndex( int index ) {
-	return (index + 1) % QUEUE_SIZE; //next index nepresiahne velkost fronty
+	return ((index + 1) % QUEUE_SIZE); //next index nepresiahne velkost fronty
 }
 
 /**
